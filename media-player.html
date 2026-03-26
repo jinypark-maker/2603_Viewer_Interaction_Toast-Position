@@ -639,48 +639,85 @@ function MediaPlayer({caseType="center"}){
 // ═══════════════════════════════════
 function App(){
   const[caseType,setCaseType]=useState("sound");
-  const cases=[
-    {id:"sound",      label:"Sound",      sub:null},
-    {id:"center",     label:"Center",     sub:"세로 9:16"},
-    {id:"center-169", label:"Center",     sub:"가로 16:9"},
-    {id:"bottom",     label:"Bottom",     sub:"세로 9:16"},
-    {id:"bottom-169", label:"Bottom",     sub:"가로 16:9"},
-  ];
+
+  const ColLabel=({label,sub})=>(
+    <div style={{fontSize:sub?9:10,fontWeight:600,
+      color:sub?"rgba(255,255,255,0.15)":"rgba(255,255,255,0.3)",
+      fontFamily:"SF Pro Text,system-ui,sans-serif",letterSpacing:.8,
+      textTransform:"uppercase",textAlign:"center",marginBottom:sub?4:6}}>
+      {label}
+    </div>
+  );
+
+  const CaseBtn=({id,label,sub,fullHeight})=>{
+    const active=caseType===id;
+    return(
+      <button onClick={()=>setCaseType(id)}
+        style={{width:"100%",padding:"9px 0",borderRadius:8,border:"none",cursor:"pointer",
+          fontFamily:"SF Pro Text,system-ui,sans-serif",transition:"all .15s",
+          background:active?"#fff":"rgba(255,255,255,0.08)",
+          color:active?"#111":"rgba(255,255,255,0.4)",
+          display:"flex",flexDirection:"column",alignItems:"center",gap:2,
+          ...(fullHeight?{flex:1}:{})}}>
+        <span style={{fontSize:12,fontWeight:700}}>{label}</span>
+        {sub&&<span style={{fontSize:10,fontWeight:500,opacity:active?0.55:0.6}}>{sub}</span>}
+      </button>
+    );
+  };
+
+  const SmallBtn=({id,label,flex})=>{
+    const active=caseType===id;
+    return(
+      <button onClick={()=>setCaseType(id)}
+        style={{padding:"8px 10px",borderRadius:6,border:"none",cursor:"pointer",
+          fontFamily:"SF Pro Text,system-ui,sans-serif",transition:"all .15s",
+          background:active?"#fff":"rgba(255,255,255,0.08)",
+          color:active?"#111":"rgba(255,255,255,0.4)",
+          fontSize:11,fontWeight:700,
+          ...(flex?{flex:1}:{})}}>
+        {label}
+      </button>
+    );
+  };
+
   return(
-    <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:20,
-      minHeight:"100vh",justifyContent:"center",background:"#111",padding:"20px 0"}}>
-      {/* Case Selector */}
-      <div style={{display:"flex",flexDirection:"column",gap:8,alignItems:"center"}}>
-        {/* Sound – 단독 */}
-        <button onClick={()=>setCaseType("sound")}
-          style={{width:200,padding:"11px 0",borderRadius:10,border:"none",cursor:"pointer",
-            fontFamily:"SF Pro Text,system-ui,sans-serif",fontSize:14,fontWeight:600,
-            transition:"all .15s",
-            background:caseType==="sound"?"#fff":"rgba(255,255,255,0.08)",
-            color:caseType==="sound"?"#111":"rgba(255,255,255,0.45)"}}>
-          Sound
-        </button>
-        {/* No Sound – 2×2 그리드 */}
-        <div style={{display:"flex",flexDirection:"column",gap:2}}>
-          <div style={{fontSize:10,fontWeight:600,color:"rgba(255,255,255,0.25)",
-            fontFamily:"SF Pro Text,system-ui,sans-serif",letterSpacing:1,
-            textTransform:"uppercase",marginBottom:4,textAlign:"center"}}>No Sound</div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
-            {cases.filter(c=>c.id!=="sound").map(c=>{
-              const active=caseType===c.id;
-              return(
-                <button key={c.id} onClick={()=>setCaseType(c.id)}
-                  style={{padding:"10px 16px",borderRadius:10,border:"none",cursor:"pointer",
-                    fontFamily:"SF Pro Text,system-ui,sans-serif",transition:"all .15s",
-                    background:active?"#fff":"rgba(255,255,255,0.08)",
-                    color:active?"#111":"rgba(255,255,255,0.45)",
-                    display:"flex",flexDirection:"column",alignItems:"center",gap:2,
-                    minWidth:88}}>
-                  <span style={{fontSize:13,fontWeight:700}}>{c.label}</span>
-                  <span style={{fontSize:10,fontWeight:500,opacity:active?0.6:0.7}}>{c.sub}</span>
-                </button>
-              );
-            })}
+    <div style={{display:"flex",flexDirection:"column",alignItems:"center",
+      minHeight:"100vh",justifyContent:"center",background:"#111",gap:20}}>
+      {/* 셀렉터 */}
+      <div style={{display:"flex",gap:24,alignItems:"stretch"}}>
+        {/* Sound */}
+        <div style={{display:"flex",flexDirection:"column",gap:6}}>
+          <ColLabel label="Sound"/>
+          <button onClick={()=>setCaseType("sound")}
+            style={{flex:1,padding:"0 20px",borderRadius:8,border:"none",cursor:"pointer",
+              fontFamily:"SF Pro Text,system-ui,sans-serif",transition:"all .15s",
+              background:caseType==="sound"?"#fff":"rgba(255,255,255,0.08)",
+              color:caseType==="sound"?"#111":"rgba(255,255,255,0.4)",
+              fontSize:12,fontWeight:700,
+              display:"flex",alignItems:"center",justifyContent:"center"}}>
+            No Toast
+          </button>
+        </div>
+        {/* No Sound */}
+        <div style={{display:"flex",flexDirection:"column",gap:6}}>
+          <ColLabel label="No Sound"/>
+          <div style={{display:"flex",gap:6,flex:1}}>
+            {/* Center 그룹 */}
+            <div style={{display:"flex",flexDirection:"column",gap:4,alignItems:"center",flex:1}}>
+              <ColLabel label="Center" sub/>
+              <div style={{display:"flex",gap:4,flex:1,width:"100%"}}>
+                <SmallBtn id="center"     label="9:16" flex/>
+                <SmallBtn id="center-169" label="16:9" flex/>
+              </div>
+            </div>
+            {/* Bottom 그룹 */}
+            <div style={{display:"flex",flexDirection:"column",gap:4,alignItems:"center",flex:1}}>
+              <ColLabel label="Bottom" sub/>
+              <div style={{display:"flex",gap:4,flex:1,width:"100%"}}>
+                <SmallBtn id="bottom"     label="9:16" flex/>
+                <SmallBtn id="bottom-169" label="16:9" flex/>
+              </div>
+            </div>
           </div>
         </div>
       </div>
